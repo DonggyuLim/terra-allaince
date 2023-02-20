@@ -1,15 +1,16 @@
 package data
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"sort"
+	"strconv"
 	"sync"
 
 	"github.com/DonggyuLim/Alliance-Rank/account"
 	"github.com/DonggyuLim/Alliance-Rank/db"
 	"github.com/DonggyuLim/Alliance-Rank/utils"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
@@ -27,25 +28,11 @@ const (
 	ORDOS
 )
 
-func GetEndopoint(a int) string {
-	switch a {
-	case 0:
-		// return "https://atreides.terra.dev:1317"
-		return "http://localhost:1317"
-	case 1:
-		return "http://localhost:2317"
-	case 2:
-		return "http://localhost:3317"
-	case 3:
-		return "http://localhost:4317"
-	}
-	return ""
-}
-
 func Main(wg *sync.WaitGroup) {
 	defer wg.Done()
-	height := 37274
-
+	// height := 438
+	height, _ := strconv.Atoi(utils.LoadENV("HEIGHT", "height.env"))
+	fmt.Println(height)
 	for {
 		latestBlockHeight := []int{GetLastBlock(ATREIDES), GetLastBlock(CORRINO), GetLastBlock(Harkonnen), GetLastBlock(ORDOS)}
 		sort.Ints(latestBlockHeight)
@@ -58,6 +45,7 @@ func Main(wg *sync.WaitGroup) {
 		MakeData(height, CORRINO)
 		MakeData(height, ORDOS)
 		height += 1
+		utils.WriteENV("HEIGHT", strconv.Itoa(height), "height.env")
 	}
 }
 
@@ -68,12 +56,11 @@ func MakeData(height, chainCode int) {
 	if height > latestBlockHeight {
 		height = latestBlockHeight
 		fmt.Println(height)
-	} else {
-		fmt.Println(height)
 	}
 
 	delegations, err := GetDelegations(height, chainCode)
-	if delegations.Deligations == nil || err != nil {
+	if len(delegations.Deligations) == 0 || err != nil {
+		fmt.Printf("%v %v Not Delegate\n", chainCode, height)
 		return
 	}
 	for _, el := range delegations.Deligations {
@@ -86,39 +73,49 @@ func MakeData(height, chainCode int) {
 			el.Delegation.Denom,
 		)
 		if err != nil || len(resReward) == 0 {
+			fmt.Printf("%v %v Not Reward\n", chainCode, height)
 			continue
 		}
 		reward := account.Reward{
-			LastHeight: height,
+			LastHeight: uint(height),
 		}
 
 		for _, re := range resReward {
 			switch re.Denom {
 			case sCOR:
-				reward.SCOR = utils.DecimalAddString(reward.SCOR, re.Amount)
+				amount, err := strconv.Atoi(re.Amount)
+				utils.PanicError(err)
+				reward.SCOR = reward.SCOR + uint(amount)
 
 			case sORD:
-				reward.SORD = utils.DecimalAddString(reward.SORD, re.Amount)
+				amount, err := strconv.Atoi(re.Amount)
+				utils.PanicError(err)
+				reward.SORD = reward.SORD + uint(amount)
 			case uatr:
-				reward.UAtr = utils.DecimalAddString(reward.UAtr, re.Amount)
+				amount, err := strconv.Atoi(re.Amount)
+				utils.PanicError(err)
+				reward.UAtr = reward.UAtr + uint(amount)
 			case uhar:
-				reward.UHar = utils.DecimalAddString(reward.UHar, re.Amount)
+				amount, err := strconv.Atoi(re.Amount)
+				utils.PanicError(err)
+				reward.UHar = reward.UHar + uint(amount)
 			case ucor:
-				reward.UCor = utils.DecimalAddString(reward.UCor, re.Amount)
+				amount, err := strconv.Atoi(re.Amount)
+				utils.PanicError(err)
+				reward.UCor = reward.UCor + uint(amount)
 			case uord:
-				reward.UOrd = utils.DecimalAddString(reward.UOrd, re.Amount)
+				amount, err := strconv.Atoi(re.Amount)
+				utils.PanicError(err)
+				reward.UOrd = reward.UOrd + uint(amount)
 			}
 		}
 
-		bytes, ok := db.Get(utils.MakeAddress(el.Delegation.DelegatorAddress))
 		account := account.Account{}
-		switch ok {
-		//이미 있는 경우
-		case true:
-			account.FromBytes(bytes)
-			//없는경우
-		case false:
-			fmt.Println("New Account")
+
+		filter := bson.D{{Key: "address", Value: utils.MakeAddress(el.Delegation.DelegatorAddress)}}
+		ok := db.FindOne(filter, &account)
+
+		if ok != nil {
 			account.SetAccount(el.Delegation.DelegatorAddress)
 		}
 
@@ -130,13 +127,13 @@ func MakeData(height, chainCode int) {
 			reward)
 
 		account.CalculateTotal(chainCode)
-		if utils.MakeAddress(account.Address) == "atreides1dnwrgk5rj7zyyp35ad5nee62uxvalvf57p3qg0" {
-			file, _ := json.MarshalIndent(account, "", " ")
-			ioutil.WriteFile("./account.json", file, 0644)
 
-			// fmt.Println(err)
+		switch ok {
+		case nil:
+			db.ReplaceOne(bson.D{{Key: "address", Value: account.Address}}, account)
+		case mongo.ErrNoDocuments:
+			db.Insert(account)
 		}
-		db.Add(utils.MakeAddress(el.Delegation.DelegatorAddress), account.EncodeByte())
 
 	}
 

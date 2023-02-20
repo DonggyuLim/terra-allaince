@@ -9,6 +9,21 @@ import (
 	"github.com/imroc/req/v3"
 )
 
+func GetEndopoint(a int) string {
+	switch a {
+	case 0:
+		// return "https://atreides.terra.dev:1317"
+		return "http://localhost:1317"
+	case 1:
+		return "http://localhost:2317"
+	case 2:
+		return "http://localhost:3317"
+	case 3:
+		return "http://localhost:4317"
+	}
+	return ""
+}
+
 func GetRewards(chainCode, height int, delegator, validator, denom string) ([]request.Reward, error) {
 
 	client := req.R().
@@ -44,6 +59,7 @@ func GetAddress(chainCode int, address string) string {
 func GetDelegations(height, chainCode int) (request.DelegationRequest, error) {
 
 	value := fmt.Sprintf("%v", height)
+	fmt.Println(value)
 	client := req.R().
 		SetHeader("x-cosmos-block-height", value).SetHeader("Content-Type", "application/json")
 	endpoint := fmt.Sprintf("%s/terra/alliances/delegations",

@@ -6,7 +6,9 @@ import (
 	"log"
 	"time"
 
+	"github.com/DonggyuLim/Alliance-Rank/account"
 	"github.com/DonggyuLim/Alliance-Rank/utils"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -19,9 +21,9 @@ var dbName string
 var collectionName string
 
 func Connect() {
-	url := utils.LoadENV("DBURL")
-	dbName = utils.LoadENV("DBNAME")
-	collectionName = utils.LoadENV("Collection")
+	url := utils.LoadENV("DBURL", "db.env")
+	dbName = utils.LoadENV("DBNAME", "db.env")
+	collectionName = utils.LoadENV("Collection", "db.env")
 	serverAPIOptions := options.ServerAPI(options.ServerAPIVersion1)
 	clientOptions := options.Client().
 		ApplyURI(url).
@@ -47,12 +49,12 @@ func GetCollection() *mongo.Collection {
 	return db.Database(dbName).Collection(collectionName)
 }
 
-func Insert(data interface{}) error {
+func Insert(account account.Account) error {
 	exp := 5 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), exp)
 	defer cancel()
 	collection := db.Database(dbName).Collection(collectionName)
-	insertResult, err := collection.InsertOne(ctx, data)
+	insertResult, err := collection.InsertOne(ctx, account)
 	if err != nil {
 		return err
 	}
@@ -61,12 +63,17 @@ func Insert(data interface{}) error {
 	return nil
 }
 
-func InsertMany(data []interface{}) {
+func InsertMany(data []account.Account) {
+	var a []interface{}
+	for _, el := range data {
+		a = append(a, el)
+	}
 	exp := 20 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), exp)
 	defer cancel()
 	collection := db.Database(dbName).Collection(collectionName)
-	_, err := collection.InsertMany(ctx, data)
+	_, err := collection.InsertMany(ctx, a)
+
 	if err != nil {
 		fmt.Println(err)
 		panic(err)
@@ -74,41 +81,25 @@ func InsertMany(data []interface{}) {
 	fmt.Println("Insert End")
 }
 
-func FindOne(filter bson.D, data interface{}) interface{} {
-	a := data
+func FindOne(filter bson.D, a *account.Account) error {
+
 	exp := 5 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), exp)
 	defer cancel()
 	collection := db.Database(dbName).Collection(collectionName)
-	err := collection.FindOne(ctx, filter).Decode(data)
+	err := collection.FindOne(ctx, filter).Decode(a)
+
 	if err != nil {
 		// ErrNoDocuments means that the filter did not match any documents in the collection
 		if err == mongo.ErrNoDocuments {
-			return nil
+			return mongo.ErrNoDocuments
 		}
 		log.Fatal(err)
 	}
-	return a
+	return nil
 }
 
-// func FindOneAccount(filter bson.D, data interface{}) (interface{}, error) {
-// 	a := data
-// 	exp := 5 * time.Second
-// 	ctx, cancel := context.WithTimeout(context.Background(), exp)
-// 	defer cancel()
-// 	collection := db.Database(dbName).Collection(collectionName)
-// 	err := collection.FindOne(ctx, filter).Decode(&a)
-// 	fmt.Println(err)
-// 	if err != nil {
-// 		if err == mongo.ErrNoDocuments {
-// 			var a interface{}
-// 			return a, errors.New("Not Document")
-// 		}
-// 	}
-// 	return a, nil
-// }
-
-func Find(key, value, desc string, limit int64) ([]interface{}, error) {
+func Find(key, value, desc string, limit int64) ([]account.Account, error) {
 	exp := 5 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), exp)
 	defer cancel()
@@ -125,7 +116,7 @@ func Find(key, value, desc string, limit int64) ([]interface{}, error) {
 	}
 
 	cur, _ := collection.Find(ctx, filter, findOptions)
-	var curs []interface{}
+	var curs []account.Account
 	err := cur.All(context.TODO(), &curs)
 	return curs, err
 }
@@ -139,6 +130,18 @@ func FindAndReplace(filter, update bson.D) {
 	result := collection.FindOneAndReplace(ctx, filter, update)
 	fmt.Println("DB update")
 	fmt.Println(result.Err().Error())
+}
+
+func ReplaceOne(filter bson.D, account account.Account) {
+
+	exp := 5 * time.Second
+	ctx, cancel := context.WithTimeout(context.Background(), exp)
+	defer cancel()
+	collection := db.Database(dbName).Collection(collectionName)
+
+	_, err := collection.ReplaceOne(ctx, filter, account)
+
+	utils.PanicError(err)
 }
 
 func UpdateOne(filter, update bson.D) {

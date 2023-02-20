@@ -21,8 +21,14 @@ func Start(wg *sync.WaitGroup) {
 		MaxAge:       12 * time.Hour,
 	}))
 
-	// r.GET("/", Root)
-	r.GET("/:account", UserReward)
+	r.GET("/", Root)
+	r.GET("/uatr", UatrRank)
+	r.GET("/uhar", UHarRank)
+	r.GET("/ucor", UCorRank)
+	r.GET("/uord", UOrdRank)
+	r.GET("/scor", SCorRank)
+	r.GET("/sord", SOrdRank)
+	r.GET("/account/:address", UserReward)
 	r.Run(port)
 	defer wg.Done()
 }

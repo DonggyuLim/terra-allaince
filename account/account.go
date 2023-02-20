@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 
 	"github.com/DonggyuLim/Alliance-Rank/utils"
+	"github.com/shopspring/decimal"
 )
 
 type Account struct {
@@ -19,8 +20,8 @@ type Account struct {
 type Chain struct {
 	Address string            `bson:"address" json:"address"`
 	Rewards map[string]Reward `bson:"reward" json:"rewards"` //key = validator Address
-	Claim   Cliam             `bson:"claim" json:"claim"`
-	Total   Total             `bson:"total" json:"total"`
+	Claim   Claim             `bson:"claim" json:"claim"`
+	Total   ChainTotal        `bson:"total" json:"total"`
 }
 
 type Reward struct {
@@ -33,7 +34,25 @@ type Reward struct {
 	SORD       uint `bson:"sord" json:"sord"`
 }
 
+type Claim struct {
+	UAtr uint `json:"uatr"`
+	UCor uint `json:"ucor"`
+	UHar uint `json:"uhar"`
+	UOrd uint `json:"uord"`
+	SCOR uint `json:"scor"`
+	SORD uint `json:"sord"`
+}
 type Total struct {
+	UAtr  string `json:"uatr"`
+	UCor  string `json:"ucor"`
+	UHar  string `json:"uhar"`
+	UOrd  string `json:"uord"`
+	SCOR  string `json:"scor"`
+	SORD  string `json:"sord"`
+	Total string `json:"total"`
+}
+
+type ChainTotal struct {
 	UAtr  uint `json:"uatr"`
 	UCor  uint `json:"ucor"`
 	UHar  uint `json:"uhar"`
@@ -41,14 +60,6 @@ type Total struct {
 	SCOR  uint `json:"scor"`
 	SORD  uint `json:"sord"`
 	Total uint `json:"total"`
-}
-type Cliam struct {
-	UAtr uint `json:"uatr"`
-	UCor uint `json:"ucor"`
-	UHar uint `json:"uhar"`
-	UOrd uint `json:"uord"`
-	SCOR uint `json:"scor"`
-	SORD uint `json:"sord"`
 }
 
 func (a *Account) SetAccount(address string) {
@@ -88,6 +99,7 @@ func (a *Account) UpdateClaimAndReward(
 			claim := origin.UAtr - reward.UAtr
 			a.Atreides.Claim.UAtr =
 				a.Atreides.Claim.UAtr + claim
+
 		}
 		a.Atreides.Rewards[validator] = reward
 	case 1:
@@ -199,7 +211,7 @@ func (a *Account) UpdateUndelegate(chainCode, height int) {
 
 func (a *Account) CalculateTotal(chainCode int) {
 
-	ct := Total{}
+	ct := ChainTotal{}
 
 	switch chainCode {
 	case 0:
@@ -291,27 +303,33 @@ func (a *Account) CalculateTotal(chainCode int) {
 	}
 	a.Total = Total{}
 	//calculate NativeTotal
-	a.Total.UAtr = a.Total.UAtr + a.Atreides.Total.UAtr
-	a.Total.UHar = a.Total.UHar + a.Harkonnen.Total.UHar
-	a.Total.UCor = a.Total.UCor + a.Corrino.Total.UCor
-	a.Total.UOrd = a.Total.UOrd + a.Ordos.Total.UOrd
+
+	a.Total.UAtr = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Atreides.Total.UAtr))).Div(decimal.NewFromInt(100000)).String()
+	a.Total.UHar = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Atreides.Total.UHar))).Div(decimal.NewFromInt(100000)).String()
+	a.Total.UCor = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Atreides.Total.UCor))).Div(decimal.NewFromInt(100000)).String()
+	a.Total.UOrd = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Atreides.Total.UOrd))).Div(decimal.NewFromInt(100000)).String()
 
 	//calculate SCOR Total
-	a.Total.SCOR = a.Total.SCOR +
-		a.Atreides.Total.SCOR +
-		a.Harkonnen.Total.SCOR +
-		a.Corrino.Total.SCOR +
-		a.Ordos.Total.SCOR
+	a.Total.SCOR = decimal.NewFromInt(0).
+		Add(decimal.NewFromInt(int64(a.Atreides.Total.SCOR))).
+		Add(decimal.NewFromInt(int64(a.Harkonnen.Total.SCOR))).
+		Add(decimal.NewFromInt(int64(a.Corrino.Total.SCOR))).
+		Add(decimal.NewFromInt(int64(a.Ordos.Total.SCOR))).String()
 
 	///calculate SORD Total
-	a.Total.SORD = a.Total.SORD +
-		a.Atreides.Total.SORD +
-		a.Harkonnen.Total.SORD +
-		a.Corrino.Total.SORD +
-		a.Ordos.Total.SORD
+	a.Total.SORD = decimal.NewFromInt(0).
+		Add(decimal.NewFromInt(int64(a.Atreides.Total.SORD))).
+		Add(decimal.NewFromInt(int64(a.Harkonnen.Total.SORD))).
+		Add(decimal.NewFromInt(int64(a.Corrino.Total.SORD))).
+		Add(decimal.NewFromInt(int64(a.Ordos.Total.SORD))).String()
 
 	a.Total.Total =
-		a.Total.UAtr + a.Total.UHar + a.Total.UCor + a.Total.UOrd + a.Total.SCOR + a.Total.SORD
+		decimal.RequireFromString(a.Total.UAtr).
+			Add(decimal.RequireFromString(a.Total.UHar)).
+			Add(decimal.RequireFromString(a.Total.UCor)).
+			Add(decimal.RequireFromString(a.Total.UOrd)).
+			Add(decimal.RequireFromString(a.Total.SCOR)).
+			Add(decimal.RequireFromString(a.Total.SORD)).String()
 }
 
 func (r Reward) EncodeJson() string {

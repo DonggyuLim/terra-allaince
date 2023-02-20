@@ -11,26 +11,63 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type ToTalResponse struct {
+	Address string `json:"address"`
+	UAtr    string `json:"uatr"`
+	UCor    string `json:"ucor"`
+	UHar    string `json:"uhar"`
+	UOrd    string `json:"uord"`
+	SCOR    string `json:"scor"`
+	SORD    string `json:"sord"`
+	Total   string `json:"total"`
+}
+
 func Root(c *gin.Context) {
+
 	list, err := db.Find("", "", "total.total", 100)
 	// fmt.Println(list)
+	var res []ToTalResponse
+	for _, el := range list {
+		total := ToTalResponse{
+			Address: el.Address,
+			UAtr:    el.Total.UAtr,
+			UCor:    el.Total.UCor,
+			UHar:    el.Total.UHar,
+			UOrd:    el.Total.UOrd,
+			SCOR:    el.Total.SCOR,
+			SORD:    el.Total.SORD,
+		}
+		res = append(res, total)
+	}
 	if err != nil {
 		fmt.Println(err)
 		c.String(404, err.Error())
 		return
 	}
-	c.JSON(200, list)
+	c.JSON(200, res)
+}
+
+type UAtrResponse struct {
+	Address string `json:"address"`
+	UAtr    string `json:"uatr"`
 }
 
 func UatrRank(c *gin.Context) {
 	list, err := db.Find("", "", "total.uatr", 100)
-
+	var res []UAtrResponse
+	for _, el := range list {
+		atr := UAtrResponse{
+			Address: el.Address,
+			UAtr:    el.Total.UAtr,
+		}
+		res = append(res, atr)
+	}
 	if err != nil {
 		fmt.Println(err)
 		c.String(404, err.Error())
 		return
 	}
-	c.JSON(200, list)
+	c.JSON(200, res)
 }
 func UHarRank(c *gin.Context) {
 	list, err := db.Find("", "", "total.uhar", 100)

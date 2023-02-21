@@ -10,7 +10,6 @@ import (
 	"github.com/DonggyuLim/Alliance-Rank/db"
 	"github.com/DonggyuLim/Alliance-Rank/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
@@ -29,8 +28,10 @@ const (
 )
 
 func Main(wg *sync.WaitGroup) {
+
 	defer wg.Done()
 	// height := 438
+
 	height, _ := strconv.Atoi(utils.LoadENV("HEIGHT", "height.env"))
 	fmt.Println(height)
 	for {
@@ -40,10 +41,10 @@ func Main(wg *sync.WaitGroup) {
 			height = latestBlockHeight[len(latestBlockHeight)-1]
 		}
 
-		MakeData(height, ATREIDES)
-		MakeData(height, Harkonnen)
-		MakeData(height, CORRINO)
-		MakeData(height, ORDOS)
+		MakeData(height, ATREIDES)  //atr
+		MakeData(height, Harkonnen) //har
+		MakeData(height, CORRINO)   //cor
+		MakeData(height, ORDOS)     //ord
 		height += 1
 		utils.WriteENV("HEIGHT", strconv.Itoa(height), "height.env")
 	}
@@ -116,7 +117,14 @@ func MakeData(height, chainCode int) {
 		ok := db.FindOne(filter, &account)
 
 		if ok != nil {
-			account.SetAccount(el.Delegation.DelegatorAddress)
+			account.SetAccount(
+				el.Delegation.DelegatorAddress,
+				el.Delegation.ValidatorAddress,
+				reward,
+				chainCode,
+			)
+			db.Insert(account)
+			continue
 		}
 
 		account.UpdateUndelegate(chainCode, height)
@@ -128,12 +136,7 @@ func MakeData(height, chainCode int) {
 
 		account.CalculateTotal(chainCode)
 
-		switch ok {
-		case nil:
-			db.ReplaceOne(bson.D{{Key: "address", Value: account.Address}}, account)
-		case mongo.ErrNoDocuments:
-			db.Insert(account)
-		}
+		db.ReplaceOne(bson.D{{Key: "address", Value: account.Address}}, account)
 
 	}
 

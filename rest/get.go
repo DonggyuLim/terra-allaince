@@ -23,7 +23,7 @@ type ToTalResponse struct {
 }
 
 func Root(c *gin.Context) {
-
+	fmt.Println("ROOT")
 	list, err := db.Find("", "", "total.total", 100)
 	// fmt.Println(list)
 	var res []ToTalResponse
@@ -36,6 +36,7 @@ func Root(c *gin.Context) {
 			UOrd:    el.Total.UOrd,
 			SCOR:    el.Total.SCOR,
 			SORD:    el.Total.SORD,
+			Total:   el.Total.Total,
 		}
 		res = append(res, total)
 	}
@@ -49,7 +50,7 @@ func Root(c *gin.Context) {
 
 type UAtrResponse struct {
 	Address string `json:"address"`
-	UAtr    string `json:"uatr"`
+	UAtr    string `json:"uatr_amount"`
 }
 
 func UatrRank(c *gin.Context) {
@@ -69,55 +70,120 @@ func UatrRank(c *gin.Context) {
 	}
 	c.JSON(200, res)
 }
+
+type UharResponse struct {
+	Address string `json:"address"`
+	UHar    string `json:"uhar_amount"`
+}
+
 func UHarRank(c *gin.Context) {
 	list, err := db.Find("", "", "total.uhar", 100)
-
+	var res []UharResponse
+	for _, el := range list {
+		uhar := UharResponse{
+			Address: el.Address,
+			UHar:    el.Total.UHar,
+		}
+		res = append(res, uhar)
+	}
 	if err != nil {
 		fmt.Println(err)
 		c.String(404, err.Error())
 		return
 	}
-	c.JSON(200, list)
+	c.JSON(200, res)
 }
+
+type UCorResponse struct {
+	Address string `json:"address"`
+	UCor    string `json:"ucor_amount"`
+}
+
 func UCorRank(c *gin.Context) {
 	list, err := db.Find("", "", "total.ucor", 100)
-
+	var res []UCorResponse
+	for _, el := range list {
+		ucor := UCorResponse{
+			Address: el.Address,
+			UCor:    el.Total.UCor,
+		}
+		res = append(res, ucor)
+	}
 	if err != nil {
 		fmt.Println(err)
 		c.String(404, err.Error())
 		return
 	}
-	c.JSON(200, list)
+	c.JSON(200, res)
 }
+
+type UOrdResponse struct {
+	Address string `json:"address"`
+	UOrd    string `json:"uord_amount"`
+}
+
 func UOrdRank(c *gin.Context) {
 	list, err := db.Find("", "", "total.ord", 100)
-
+	var res []UOrdResponse
+	for _, el := range list {
+		uord := UOrdResponse{
+			Address: el.Address,
+			UOrd:    el.Total.UOrd,
+		}
+		res = append(res, uord)
+	}
 	if err != nil {
 		fmt.Println(err)
 		c.String(404, err.Error())
 		return
 	}
-	c.JSON(200, list)
+	c.JSON(200, res)
 }
+
+type ScorResponse struct {
+	Address string `json:"address"`
+	SCor    string `json:"scor_amount"`
+}
+
 func SCorRank(c *gin.Context) {
 	list, err := db.Find("", "", "total.scor", 100)
-
+	var res []ScorResponse
+	for _, el := range list {
+		scor := ScorResponse{
+			Address: el.Address,
+			SCor:    el.Total.SCOR,
+		}
+		res = append(res, scor)
+	}
 	if err != nil {
 		fmt.Println(err)
 		c.String(404, err.Error())
 		return
 	}
-	c.JSON(200, list)
+	c.JSON(200, res)
 }
+
+type SOrdResponse struct {
+	Address string `json:"address"`
+	Sord    string `json:"sord_amount"`
+}
+
 func SOrdRank(c *gin.Context) {
 	list, err := db.Find("", "", "total.sord", 100)
-
+	var res []SOrdResponse
+	for _, el := range list {
+		sord := SOrdResponse{
+			Address: el.Address,
+			Sord:    el.Total.SORD,
+		}
+		res = append(res, sord)
+	}
 	if err != nil {
 		fmt.Println(err)
 		c.String(404, err.Error())
 		return
 	}
-	c.JSON(200, list)
+	c.JSON(200, res)
 }
 
 func UserReward(c *gin.Context) {

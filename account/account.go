@@ -53,16 +53,16 @@ type Total struct {
 }
 
 type ChainTotal struct {
-	UAtr  uint `json:"uatr"`
-	UCor  uint `json:"ucor"`
-	UHar  uint `json:"uhar"`
-	UOrd  uint `json:"uord"`
-	SCOR  uint `json:"scor"`
-	SORD  uint `json:"sord"`
-	Total uint `json:"total"`
+	UAtr uint `json:"uatr"`
+	UCor uint `json:"ucor"`
+	UHar uint `json:"uhar"`
+	UOrd uint `json:"uord"`
+	SCOR uint `json:"scor"`
+	SORD uint `json:"sord"`
+	// Total uint `json:"total"`
 }
 
-func (a *Account) SetAccount(address string) {
+func (a *Account) SetAccount(address, validator string, reward Reward, chainCode int) {
 	m1 := make(map[string]Reward)
 	m2 := make(map[string]Reward)
 	m3 := make(map[string]Reward)
@@ -72,6 +72,16 @@ func (a *Account) SetAccount(address string) {
 	a.Harkonnen.Rewards = m2
 	a.Corrino.Rewards = m3
 	a.Ordos.Rewards = m4
+	switch chainCode {
+	case 0:
+		a.Atreides.Rewards[validator] = reward
+	case 1:
+		a.Harkonnen.Rewards[validator] = reward
+	case 2:
+		a.Corrino.Rewards[validator] = reward
+	case 3:
+		a.Ordos.Rewards[validator] = reward
+	}
 }
 
 func (a Account) EncodeByte() []byte {
@@ -231,8 +241,7 @@ func (a *Account) CalculateTotal(chainCode int) {
 			ct.SCOR + a.Atreides.Claim.SCOR
 		ct.SORD =
 			ct.SORD + a.Atreides.Claim.SORD
-		ct.Total =
-			ct.UAtr + ct.SCOR + ct.SORD
+
 		a.Atreides.Total = ct
 
 		//harkonnen
@@ -252,8 +261,7 @@ func (a *Account) CalculateTotal(chainCode int) {
 			ct.SCOR + a.Harkonnen.Claim.SCOR
 		ct.SORD =
 			ct.SORD + a.Harkonnen.Claim.SORD
-		ct.Total =
-			ct.UHar + ct.SCOR + ct.SORD
+
 		a.Harkonnen.Total = ct
 		// a.Total = a.Total+ a.Harkonnen.Total.NativeTotal)+ a.Harkonnen.Total.SCOR)+ a.Harkonnen.Total.SORD)
 	case 2:
@@ -272,8 +280,7 @@ func (a *Account) CalculateTotal(chainCode int) {
 			ct.SCOR + a.Corrino.Claim.SCOR
 		ct.SORD =
 			ct.SORD + a.Corrino.Claim.SORD
-		ct.Total =
-			ct.UCor + ct.SCOR + ct.SORD
+
 		a.Corrino.Total = ct
 		// a.Total = a.Total+ a.Corrino.Total.NativeTotal)+ a.Corrino.Total.SCOR)+ a.Corrino.Total.SORD)
 	case 3:
@@ -295,8 +302,7 @@ func (a *Account) CalculateTotal(chainCode int) {
 			ct.SCOR + a.Ordos.Claim.SCOR
 		ct.SORD =
 			ct.SORD + a.Ordos.Claim.SORD
-		ct.Total =
-			ct.UOrd + ct.SCOR + ct.SORD
+
 		a.Ordos.Total = ct
 
 		// a.Total = a.Total+ a.Ordos.Total.NativeTotal)+ a.Ordos.Total.SCOR)+ a.Ordos.Total.SORD)
@@ -304,10 +310,13 @@ func (a *Account) CalculateTotal(chainCode int) {
 	a.Total = Total{}
 	//calculate NativeTotal
 
-	a.Total.UAtr = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Atreides.Total.UAtr))).Div(decimal.NewFromInt(100000)).String()
-	a.Total.UHar = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Atreides.Total.UHar))).Div(decimal.NewFromInt(100000)).String()
-	a.Total.UCor = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Atreides.Total.UCor))).Div(decimal.NewFromInt(100000)).String()
-	a.Total.UOrd = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Atreides.Total.UOrd))).Div(decimal.NewFromInt(100000)).String()
+	a.Total.UAtr = decimal.NewFromInt(0).
+		Add(decimal.NewFromInt(int64(a.Atreides.Total.UAtr))).
+		Div(decimal.NewFromInt(1000000)).
+		String()
+	a.Total.UHar = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Harkonnen.Total.UHar))).Div(decimal.NewFromInt(1000000)).String()
+	a.Total.UCor = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Corrino.Total.UCor))).Div(decimal.NewFromInt(1000000)).String()
+	a.Total.UOrd = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Ordos.Total.UOrd))).Div(decimal.NewFromInt(1000000)).String()
 
 	//calculate SCOR Total
 	a.Total.SCOR = decimal.NewFromInt(0).

@@ -30,13 +30,13 @@ func Root(c *gin.Context) {
 	for _, el := range list {
 		total := ToTalResponse{
 			Address: el.Address,
-			UAtr:    el.Total.UAtr,
-			UCor:    el.Total.UCor,
-			UHar:    el.Total.UHar,
-			UOrd:    el.Total.UOrd,
-			SCOR:    el.Total.SCOR,
-			SORD:    el.Total.SORD,
-			Total:   el.Total.Total,
+			UAtr:    fmt.Sprintf("%f", el.Total.UAtr),
+			UCor:    fmt.Sprintf("%f", el.Total.UCor),
+			UHar:    fmt.Sprintf("%f", el.Total.UHar),
+			UOrd:    fmt.Sprintf("%f", el.Total.UOrd),
+			SCOR:    fmt.Sprintf("%f", el.Total.SCOR),
+			SORD:    fmt.Sprintf("%f", el.Total.SORD),
+			Total:   fmt.Sprintf("%f", el.Total.Total),
 		}
 		res = append(res, total)
 	}
@@ -59,7 +59,7 @@ func UatrRank(c *gin.Context) {
 	for _, el := range list {
 		atr := UAtrResponse{
 			Address: el.Address,
-			UAtr:    el.Total.UAtr,
+			UAtr:    fmt.Sprintf("%f", el.Total.UAtr),
 		}
 		res = append(res, atr)
 	}
@@ -82,7 +82,7 @@ func UHarRank(c *gin.Context) {
 	for _, el := range list {
 		uhar := UharResponse{
 			Address: el.Address,
-			UHar:    el.Total.UHar,
+			UHar:    fmt.Sprintf("%f", el.Total.UHar),
 		}
 		res = append(res, uhar)
 	}
@@ -105,7 +105,7 @@ func UCorRank(c *gin.Context) {
 	for _, el := range list {
 		ucor := UCorResponse{
 			Address: el.Address,
-			UCor:    el.Total.UCor,
+			UCor:    fmt.Sprintf("%f", el.Total.UCor),
 		}
 		res = append(res, ucor)
 	}
@@ -128,7 +128,7 @@ func UOrdRank(c *gin.Context) {
 	for _, el := range list {
 		uord := UOrdResponse{
 			Address: el.Address,
-			UOrd:    el.Total.UOrd,
+			UOrd:    fmt.Sprintf("%f", el.Total.UOrd),
 		}
 		res = append(res, uord)
 	}
@@ -151,7 +151,7 @@ func SCorRank(c *gin.Context) {
 	for _, el := range list {
 		scor := ScorResponse{
 			Address: el.Address,
-			SCor:    el.Total.SCOR,
+			SCor:    fmt.Sprintf("%f", el.Total.SCOR),
 		}
 		res = append(res, scor)
 	}
@@ -174,7 +174,7 @@ func SOrdRank(c *gin.Context) {
 	for _, el := range list {
 		sord := SOrdResponse{
 			Address: el.Address,
-			Sord:    el.Total.SORD,
+			Sord:    fmt.Sprintf("%f", el.Total.SORD),
 		}
 		res = append(res, sord)
 	}

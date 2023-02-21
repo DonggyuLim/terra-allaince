@@ -25,7 +25,6 @@ func Start(wg *sync.WaitGroup) {
 	r.Use(gin.Recovery())
 	memoryStore := persist.NewMemoryStore(1 * time.Minute)
 	r.Use(cache.CacheByRequestPath(memoryStore, 10*time.Second))
-
 	r.GET("/", Root)
 	r.GET("/uatr", UatrRank)
 	r.GET("/uhar", UHarRank)

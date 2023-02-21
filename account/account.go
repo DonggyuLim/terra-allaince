@@ -43,13 +43,13 @@ type Claim struct {
 	SORD uint `json:"sord"`
 }
 type Total struct {
-	UAtr  string `json:"uatr"`
-	UCor  string `json:"ucor"`
-	UHar  string `json:"uhar"`
-	UOrd  string `json:"uord"`
-	SCOR  string `json:"scor"`
-	SORD  string `json:"sord"`
-	Total string `json:"total"`
+	UAtr  float64 `json:"uatr"`
+	UCor  float64 `json:"ucor"`
+	UHar  float64 `json:"uhar"`
+	UOrd  float64 `json:"uord"`
+	SCOR  float64 `json:"scor"`
+	SORD  float64 `json:"sord"`
+	Total float64 `json:"total"`
 }
 
 type ChainTotal struct {
@@ -312,33 +312,32 @@ func (a *Account) CalculateTotal(chainCode int) {
 
 	a.Total.UAtr = decimal.NewFromInt(0).
 		Add(decimal.NewFromInt(int64(a.Atreides.Total.UAtr))).
-		Div(decimal.NewFromInt(1000000)).
-		String()
-	a.Total.UHar = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Harkonnen.Total.UHar))).Div(decimal.NewFromInt(1000000)).String()
-	a.Total.UCor = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Corrino.Total.UCor))).Div(decimal.NewFromInt(1000000)).String()
-	a.Total.UOrd = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Ordos.Total.UOrd))).Div(decimal.NewFromInt(1000000)).String()
+		Div(decimal.NewFromInt(1000000)).InexactFloat64()
+	a.Total.UHar = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Harkonnen.Total.UHar))).Div(decimal.NewFromInt(1000000)).InexactFloat64()
+	a.Total.UCor = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Corrino.Total.UCor))).Div(decimal.NewFromInt(1000000)).InexactFloat64()
+	a.Total.UOrd = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Ordos.Total.UOrd))).Div(decimal.NewFromInt(1000000)).InexactFloat64()
 
 	//calculate SCOR Total
 	a.Total.SCOR = decimal.NewFromInt(0).
 		Add(decimal.NewFromInt(int64(a.Atreides.Total.SCOR))).
 		Add(decimal.NewFromInt(int64(a.Harkonnen.Total.SCOR))).
 		Add(decimal.NewFromInt(int64(a.Corrino.Total.SCOR))).
-		Add(decimal.NewFromInt(int64(a.Ordos.Total.SCOR))).String()
+		Add(decimal.NewFromInt(int64(a.Ordos.Total.SCOR))).InexactFloat64()
 
 	///calculate SORD Total
 	a.Total.SORD = decimal.NewFromInt(0).
 		Add(decimal.NewFromInt(int64(a.Atreides.Total.SORD))).
 		Add(decimal.NewFromInt(int64(a.Harkonnen.Total.SORD))).
 		Add(decimal.NewFromInt(int64(a.Corrino.Total.SORD))).
-		Add(decimal.NewFromInt(int64(a.Ordos.Total.SORD))).String()
+		Add(decimal.NewFromInt(int64(a.Ordos.Total.SORD))).InexactFloat64()
 
 	a.Total.Total =
-		decimal.RequireFromString(a.Total.UAtr).
-			Add(decimal.RequireFromString(a.Total.UHar)).
-			Add(decimal.RequireFromString(a.Total.UCor)).
-			Add(decimal.RequireFromString(a.Total.UOrd)).
-			Add(decimal.RequireFromString(a.Total.SCOR)).
-			Add(decimal.RequireFromString(a.Total.SORD)).String()
+		decimal.NewFromFloat(a.Total.UAtr).
+			Add(decimal.NewFromFloat(a.Total.UHar)).
+			Add(decimal.NewFromFloat(a.Total.UCor)).
+			Add(decimal.NewFromFloat(a.Total.UOrd)).
+			Add(decimal.NewFromFloat(a.Total.SCOR)).
+			Add(decimal.NewFromFloat(a.Total.SORD)).InexactFloat64()
 }
 
 func (r Reward) EncodeJson() string {

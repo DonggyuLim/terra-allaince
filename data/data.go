@@ -80,6 +80,12 @@ func MakeData(height, chainCode int) {
 		}
 		reward := account.Reward{
 			LastHeight: uint(height),
+			UAtr:       0,
+			UHar:       0,
+			UCor:       0,
+			UOrd:       0,
+			SCOR:       0,
+			SORD:       0,
 		}
 
 		//GET REWARD

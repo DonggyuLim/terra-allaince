@@ -210,18 +210,22 @@ func (a *Account) UpdateUndelegate(chainCode, height int) {
 
 func (a *Account) CalculateTotal(chainCode int) {
 
-	ct := ChainTotal{}
+	ct := ChainTotal{
+		UAtr: 0,
+		UHar: 0,
+		UCor: 0,
+		UOrd: 0,
+		SCOR: 0,
+		SORD: 0,
+	}
 
 	switch chainCode {
 	case 0:
 
-		for _, el := range a.Atreides.Rewards {
-			ct.UAtr =
-				ct.UAtr + el.UAtr
-			ct.SCOR =
-				ct.SCOR + el.SCOR
-			ct.SORD =
-				ct.SORD + el.SORD
+		for _, v := range a.Atreides.Rewards {
+			ct.UAtr += v.UAtr
+			ct.SCOR += v.SCOR
+			ct.SORD += v.SORD
 		}
 		//claim reward +
 		ct.UAtr += a.Atreides.Claim.UAtr
@@ -231,10 +235,10 @@ func (a *Account) CalculateTotal(chainCode int) {
 
 		//harkonnen
 	case 1:
-		for _, el := range a.Harkonnen.Rewards {
-			ct.UHar += el.UHar
-			ct.SCOR += el.SCOR
-			ct.SORD += el.SORD
+		for _, v := range a.Harkonnen.Rewards {
+			ct.UHar += v.UHar
+			ct.SCOR += v.SCOR
+			ct.SORD += v.SORD
 		}
 		//claim reward +
 		ct.UHar += a.Harkonnen.Claim.UHar
@@ -244,10 +248,10 @@ func (a *Account) CalculateTotal(chainCode int) {
 		a.Harkonnen.Total = ct
 		// a.Total = a.Total+ a.Harkonnen.Total.NativeTotal)+ a.Harkonnen.Total.SCOR)+ a.Harkonnen.Total.SORD)
 	case 2:
-		for _, el := range a.Corrino.Rewards {
-			ct.UCor += el.UCor
-			ct.SCOR += el.SCOR
-			ct.SORD += el.SORD
+		for _, v := range a.Corrino.Rewards {
+			ct.UCor += v.UCor
+			ct.SCOR += v.SCOR
+			ct.SORD += v.SORD
 		}
 		//claim reward +
 		ct.UCor += a.Corrino.Claim.UCor
@@ -257,12 +261,12 @@ func (a *Account) CalculateTotal(chainCode int) {
 		a.Corrino.Total = ct
 
 	case 3:
-		for _, el := range a.Ordos.Rewards {
-			ct.UOrd += el.UOrd
+		for _, v := range a.Ordos.Rewards {
+			ct.UOrd += v.UOrd
 
-			ct.SCOR += el.SCOR
+			ct.SCOR += v.SCOR
 
-			ct.SORD += el.SORD
+			ct.SORD += v.SORD
 
 		}
 		//claim reward +

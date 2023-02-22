@@ -322,14 +322,14 @@ func (a *Account) CalculateTotal(chainCode int) {
 		Add(decimal.NewFromInt(int64(a.Atreides.Total.SCOR))).
 		Add(decimal.NewFromInt(int64(a.Harkonnen.Total.SCOR))).
 		Add(decimal.NewFromInt(int64(a.Corrino.Total.SCOR))).
-		Add(decimal.NewFromInt(int64(a.Ordos.Total.SCOR))).InexactFloat64()
+		Add(decimal.NewFromInt(int64(a.Ordos.Total.SCOR))).Div(decimal.NewFromInt(1000000)).InexactFloat64()
 
 	///calculate SORD Total
 	a.Total.SORD = decimal.NewFromInt(0).
 		Add(decimal.NewFromInt(int64(a.Atreides.Total.SORD))).
 		Add(decimal.NewFromInt(int64(a.Harkonnen.Total.SORD))).
 		Add(decimal.NewFromInt(int64(a.Corrino.Total.SORD))).
-		Add(decimal.NewFromInt(int64(a.Ordos.Total.SORD))).InexactFloat64()
+		Add(decimal.NewFromInt(int64(a.Ordos.Total.SORD))).Div(decimal.NewFromInt(1000000)).InexactFloat64()
 
 	a.Total.Total =
 		decimal.NewFromFloat(a.Total.UAtr).

@@ -103,44 +103,55 @@ func (a *Account) UpdateClaimAndReward(
 	switch chainCode {
 	case 0:
 		a.Atreides.Address = delegator
-		// origin := a.Atreides.Rewards[validator]
-		// if origin.UAtr > reward.UAtr {
-		// 	claim := origin.UAtr - reward.UAtr
-		// 	a.Atreides.Claim.UAtr += claim
-		// 	a.Atreides.Claim.SCOR += origin.SCOR
-		// 	a.Atreides.Claim.SORD += origin.SORD
-		// }
-		a.Atreides.Rewards[validator] = reward
+		o := a.Atreides.Rewards[validator]
+		if o.UAtr > reward.UAtr {
+			claim := o.UAtr - reward.UAtr
+			a.Atreides.Claim.UAtr += claim
+			a.Atreides.Claim.SCOR += o.SCOR
+			a.Atreides.Claim.SORD += o.SORD
+			a.Atreides.Rewards[validator] = reward
+		} else {
+			a.Atreides.Rewards[validator] = reward
+		}
+
 	case 1:
 		a.Harkonnen.Address = delegator
-		// origin := a.Harkonnen.Rewards[validator]
-		// if origin.UHar > reward.UHar {
-		// 	claim := origin.UHar - reward.UHar
-		// 	a.Harkonnen.Claim.UHar += claim
-		// 	a.Harkonnen.Claim.SCOR += origin.SCOR
-		// 	a.Harkonnen.Claim.SORD += origin.SORD
-		// }
-		a.Harkonnen.Rewards[validator] = reward
+		o := a.Harkonnen.Rewards[validator]
+		if o.UHar > reward.UHar {
+			claim := o.UHar - reward.UHar
+			a.Harkonnen.Claim.UHar += claim
+			a.Harkonnen.Claim.SCOR += o.SCOR
+			a.Harkonnen.Claim.SORD += o.SORD
+			a.Harkonnen.Rewards[validator] = reward
+		} else {
+			a.Harkonnen.Rewards[validator] = reward
+		}
+
 	case 2:
 		a.Corrino.Address = delegator
-		// origin := a.Corrino.Rewards[validator]
-		// if origin.UCor > reward.UCor {
-		// 	claim := origin.UCor - reward.UCor
-		// 	a.Corrino.Claim.UCor += claim
-		// 	a.Corrino.Claim.SCOR += origin.SCOR
-		// 	a.Corrino.Claim.SORD += origin.SORD
-		// }
-		a.Corrino.Rewards[validator] = reward
+		o := a.Corrino.Rewards[validator]
+		if o.UCor > reward.UCor {
+			claim := o.UCor - reward.UCor
+			a.Corrino.Claim.UCor += claim
+			a.Corrino.Claim.SCOR += o.SCOR
+			a.Corrino.Claim.SORD += o.SORD
+			a.Corrino.Rewards[validator] = reward
+		} else {
+			a.Corrino.Rewards[validator] = reward
+		}
 	case 3:
 		a.Ordos.Address = delegator
-		// origin := a.Ordos.Rewards[validator]
-		// if origin.UOrd > reward.UOrd {
-		// 	claim := origin.UOrd - reward.UOrd
-		// 	a.Ordos.Claim.UOrd += claim
-		// 	a.Ordos.Claim.SCOR += origin.SCOR
-		// 	a.Ordos.Claim.SORD += origin.SORD
-		// }
-		a.Ordos.Rewards[validator] = reward
+		o := a.Ordos.Rewards[validator]
+		if o.UOrd > reward.UOrd {
+			claim := o.UOrd - reward.UOrd
+			a.Corrino.Claim.UOrd += claim
+			a.Corrino.Claim.SCOR += o.SCOR
+			a.Corrino.Claim.SORD += o.SORD
+			a.Ordos.Rewards[validator] = reward
+		} else {
+			a.Ordos.Rewards[validator] = reward
+		}
+
 	}
 }
 

@@ -135,7 +135,7 @@ func MakeData(height, chainCode int) {
 			el.Delegation.ValidatorAddress,
 			reward)
 
-		account.UpdateUndelegate(chainCode, height)
+		// account.UpdateUndelegate(chainCode, height)
 		account.CalculateTotal(chainCode)
 
 		db.ReplaceOne(bson.D{{Key: "address", Value: account.Address}}, account)

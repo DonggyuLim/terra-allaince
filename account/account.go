@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 
 	"github.com/DonggyuLim/Alliance-Rank/utils"
-	"github.com/shopspring/decimal"
 )
 
 type Account struct {
@@ -43,13 +42,13 @@ type Claim struct {
 	SORD uint `json:"sord"`
 }
 type Total struct {
-	UAtr  float64 `json:"uatr"`
-	UCor  float64 `json:"ucor"`
-	UHar  float64 `json:"uhar"`
-	UOrd  float64 `json:"uord"`
-	SCOR  float64 `json:"scor"`
-	SORD  float64 `json:"sord"`
-	Total float64 `json:"total"`
+	UAtr  uint `json:"uatr"`
+	UCor  uint `json:"ucor"`
+	UHar  uint `json:"uhar"`
+	UOrd  uint `json:"uord"`
+	SCOR  uint `json:"scor"`
+	SORD  uint `json:"sord"`
+	Total uint `json:"total"`
 }
 
 type ChainTotal struct {
@@ -318,34 +317,15 @@ func (a *Account) CalculateTotal(chainCode int) {
 	a.Total = Total{}
 	//calculate NativeTotal
 
-	a.Total.UAtr = decimal.NewFromInt(0).
-		Add(decimal.NewFromInt(int64(a.Atreides.Total.UAtr))).
-		Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
-	a.Total.UHar = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Harkonnen.Total.UHar))).Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
-	a.Total.UCor = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Corrino.Total.UCor))).Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
-	a.Total.UOrd = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Ordos.Total.UOrd))).Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
-
+	a.Total.UAtr = a.Atreides.Total.UAtr
+	a.Total.UHar = a.Harkonnen.Total.UHar
+	a.Total.UCor = a.Corrino.Total.UCor
+	a.Total.UOrd = a.Ordos.Total.UOrd
 	//calculate SCOR Total
-	a.Total.SCOR = decimal.NewFromInt(0).
-		Add(decimal.NewFromInt(int64(a.Atreides.Total.SCOR))).
-		Add(decimal.NewFromInt(int64(a.Harkonnen.Total.SCOR))).
-		Add(decimal.NewFromInt(int64(a.Corrino.Total.SCOR))).
-		Add(decimal.NewFromInt(int64(a.Ordos.Total.SCOR))).Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
-
+	a.Total.SCOR = a.Atreides.Total.SCOR + a.Harkonnen.Total.SCOR + a.Corrino.Total.SCOR + a.Ordos.Total.SCOR
 	///calculate SORD Total
-	a.Total.SORD = decimal.NewFromInt(0).
-		Add(decimal.NewFromInt(int64(a.Atreides.Total.SORD))).
-		Add(decimal.NewFromInt(int64(a.Harkonnen.Total.SORD))).
-		Add(decimal.NewFromInt(int64(a.Corrino.Total.SORD))).
-		Add(decimal.NewFromInt(int64(a.Ordos.Total.SORD))).Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
-
-	a.Total.Total =
-		decimal.NewFromFloat(a.Total.UAtr).
-			Add(decimal.NewFromFloat(a.Total.UHar)).
-			Add(decimal.NewFromFloat(a.Total.UCor)).
-			Add(decimal.NewFromFloat(a.Total.UOrd)).
-			Add(decimal.NewFromFloat(a.Total.SCOR)).
-			Add(decimal.NewFromFloat(a.Total.SORD)).Truncate(6).InexactFloat64()
+	a.Total.SORD = a.Atreides.Total.SORD + a.Harkonnen.Total.SORD + a.Corrino.Total.SORD + a.Ordos.Total.SORD
+	a.Total.Total = a.Total.UAtr + a.Total.UHar + a.Total.UCor + a.Total.UOrd + a.Total.SCOR + a.Total.SORD
 }
 
 func (r Reward) EncodeJson() string {

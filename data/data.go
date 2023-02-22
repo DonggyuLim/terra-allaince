@@ -64,6 +64,7 @@ func MakeData(height, chainCode int) {
 		fmt.Printf("%v %v Not Delegate\n", chainCode, height)
 		return
 	}
+
 	for _, el := range delegations.Deligations {
 
 		resReward, err := GetRewards(

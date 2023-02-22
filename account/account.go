@@ -103,91 +103,71 @@ func (a *Account) UpdateClaimAndReward(
 	switch chainCode {
 	case 0:
 		a.Atreides.Address = delegator
-		origin := a.Atreides.Rewards[validator]
-		if origin.UAtr > reward.UAtr {
-			claim := origin.UAtr - reward.UAtr
-			a.Atreides.Claim.UAtr =
-				a.Atreides.Claim.UAtr + claim
-			a.Atreides.Claim.SCOR += origin.SCOR
-			a.Atreides.Claim.SORD += origin.SORD
-		}
+		// origin := a.Atreides.Rewards[validator]
+		// if origin.UAtr > reward.UAtr {
+		// 	claim := origin.UAtr - reward.UAtr
+		// 	a.Atreides.Claim.UAtr += claim
+		// 	a.Atreides.Claim.SCOR += origin.SCOR
+		// 	a.Atreides.Claim.SORD += origin.SORD
+		// }
 		a.Atreides.Rewards[validator] = reward
 	case 1:
 		a.Harkonnen.Address = delegator
-		origin := a.Harkonnen.Rewards[validator]
-		if origin.UHar > reward.UHar {
-			claim := origin.UHar - reward.UHar
-			a.Harkonnen.Claim.UHar =
-				a.Harkonnen.Claim.UHar + claim
-			a.Harkonnen.Claim.SCOR += origin.SCOR
-			a.Harkonnen.Claim.SORD += origin.SORD
-		}
+		// origin := a.Harkonnen.Rewards[validator]
+		// if origin.UHar > reward.UHar {
+		// 	claim := origin.UHar - reward.UHar
+		// 	a.Harkonnen.Claim.UHar += claim
+		// 	a.Harkonnen.Claim.SCOR += origin.SCOR
+		// 	a.Harkonnen.Claim.SORD += origin.SORD
+		// }
 		a.Harkonnen.Rewards[validator] = reward
 	case 2:
 		a.Corrino.Address = delegator
-		origin := a.Corrino.Rewards[validator]
-		if origin.UCor > reward.UCor {
-			claim := origin.UCor - reward.UCor
-			a.Corrino.Claim.UCor =
-				a.Corrino.Claim.UCor + claim
-			a.Corrino.Claim.SCOR += origin.SCOR
-			a.Corrino.Claim.SORD += origin.SORD
-		}
-
+		// origin := a.Corrino.Rewards[validator]
+		// if origin.UCor > reward.UCor {
+		// 	claim := origin.UCor - reward.UCor
+		// 	a.Corrino.Claim.UCor += claim
+		// 	a.Corrino.Claim.SCOR += origin.SCOR
+		// 	a.Corrino.Claim.SORD += origin.SORD
+		// }
 		a.Corrino.Rewards[validator] = reward
 	case 3:
 		a.Ordos.Address = delegator
-		origin := a.Ordos.Rewards[validator]
-		if origin.UOrd > reward.UOrd {
-			claim := origin.UOrd - reward.UOrd
-			a.Ordos.Claim.UOrd =
-				a.Ordos.Claim.UOrd + claim
-			a.Ordos.Claim.SCOR += origin.SCOR
-			a.Ordos.Claim.SORD += origin.SORD
-
-		}
+		// origin := a.Ordos.Rewards[validator]
+		// if origin.UOrd > reward.UOrd {
+		// 	claim := origin.UOrd - reward.UOrd
+		// 	a.Ordos.Claim.UOrd += claim
+		// 	a.Ordos.Claim.SCOR += origin.SCOR
+		// 	a.Ordos.Claim.SORD += origin.SORD
+		// }
 		a.Ordos.Rewards[validator] = reward
 	}
 }
 
 func (a *Account) UpdateUndelegate(chainCode, height int) {
-	deleteKey := []string{}
+
 	h := uint(height)
 	switch chainCode {
 	case 0:
 		for k, v := range a.Atreides.Rewards {
 			if (v.LastHeight + 1) != h {
-				a.Atreides.Claim.UAtr =
-					a.Atreides.Claim.UAtr + v.UAtr
-				a.Atreides.Claim.SCOR =
-					a.Atreides.Claim.SCOR + v.SCOR
-				a.Atreides.Claim.SORD =
-					a.Atreides.Claim.SORD + v.SORD
-				deleteKey = append(deleteKey, k)
+				a.Atreides.Claim.UAtr += v.UAtr
+				a.Atreides.Claim.SCOR += v.SCOR
+				a.Atreides.Claim.SORD += v.SORD
+				delete(a.Atreides.Rewards, k)
 			}
 		}
 
-		//delete key
-		for _, key := range deleteKey {
-			delete(a.Atreides.Rewards, key)
-		}
 	case 1:
 		for k, v := range a.Harkonnen.Rewards {
 			if (v.LastHeight + 1) != h {
-				a.Harkonnen.Claim.UHar =
-					a.Harkonnen.Claim.UHar + v.UHar
-				a.Harkonnen.Claim.SCOR =
-					a.Harkonnen.Claim.SCOR + v.SCOR
-				a.Harkonnen.Claim.SORD =
-					a.Harkonnen.Claim.SORD + v.SORD
-				deleteKey = append(deleteKey, k)
+				a.Harkonnen.Claim.UHar += v.UHar
+				a.Harkonnen.Claim.SCOR += v.SCOR
+				a.Harkonnen.Claim.SORD += v.SORD
+				delete(a.Harkonnen.Rewards, k)
 			}
 		}
 
-		//delete key
-		for _, key := range deleteKey {
-			delete(a.Harkonnen.Rewards, key)
-		}
 	case 2:
 		for k, v := range a.Corrino.Rewards {
 			if (v.LastHeight + 1) != h {
@@ -197,14 +177,10 @@ func (a *Account) UpdateUndelegate(chainCode, height int) {
 					a.Corrino.Claim.SCOR + v.SCOR
 				a.Corrino.Claim.SORD =
 					a.Corrino.Claim.SORD + v.SORD
-				deleteKey = append(deleteKey, k)
+				delete(a.Corrino.Rewards, k)
 			}
 		}
 
-		//delete key
-		for _, key := range deleteKey {
-			delete(a.Corrino.Rewards, key)
-		}
 	case 3:
 		for k, v := range a.Ordos.Rewards {
 			if (v.LastHeight + 1) != h {
@@ -214,13 +190,8 @@ func (a *Account) UpdateUndelegate(chainCode, height int) {
 					a.Ordos.Claim.SCOR + v.SCOR
 				a.Ordos.Claim.SORD =
 					a.Ordos.Claim.SORD + v.SORD
-				deleteKey = append(deleteKey, k)
+				delete(a.Ordos.Rewards, k)
 			}
-		}
-
-		//delete key
-		for _, key := range deleteKey {
-			delete(a.Ordos.Rewards, key)
 		}
 	}
 
@@ -242,73 +213,51 @@ func (a *Account) CalculateTotal(chainCode int) {
 				ct.SORD + el.SORD
 		}
 		//claim reward +
-		ct.UAtr =
-			ct.UAtr + a.Atreides.Claim.UAtr
-		ct.SCOR =
-			ct.SCOR + a.Atreides.Claim.SCOR
-		ct.SORD =
-			ct.SORD + a.Atreides.Claim.SORD
-
+		ct.UAtr += a.Atreides.Claim.UAtr
+		ct.SCOR += a.Atreides.Claim.SCOR
+		ct.SORD += a.Atreides.Claim.SORD
 		a.Atreides.Total = ct
 
 		//harkonnen
 	case 1:
 		for _, el := range a.Harkonnen.Rewards {
-			ct.UHar =
-				ct.UHar + el.UHar
-			ct.SCOR =
-				ct.SCOR + el.SCOR
-			ct.SORD =
-				ct.SORD + el.SORD
+			ct.UHar += el.UHar
+			ct.SCOR += el.SCOR
+			ct.SORD += el.SORD
 		}
 		//claim reward +
-		ct.UHar =
-			ct.UHar + a.Harkonnen.Claim.UHar
-		ct.SCOR =
-			ct.SCOR + a.Harkonnen.Claim.SCOR
-		ct.SORD =
-			ct.SORD + a.Harkonnen.Claim.SORD
+		ct.UHar += a.Harkonnen.Claim.UHar
+		ct.SCOR += a.Harkonnen.Claim.SCOR
+		ct.SORD += a.Harkonnen.Claim.SORD
 
 		a.Harkonnen.Total = ct
 		// a.Total = a.Total+ a.Harkonnen.Total.NativeTotal)+ a.Harkonnen.Total.SCOR)+ a.Harkonnen.Total.SORD)
 	case 2:
 		for _, el := range a.Corrino.Rewards {
-			ct.UCor =
-				ct.UCor + el.UCor
-			ct.SCOR =
-				ct.SCOR + el.SCOR
-			ct.SORD =
-				ct.SORD + el.SORD
+			ct.UCor += el.UCor
+			ct.SCOR += el.SCOR
+			ct.SORD += el.SORD
 		}
 		//claim reward +
-		ct.UCor =
-			ct.UCor + a.Corrino.Claim.UCor
-		ct.SCOR =
-			ct.SCOR + a.Corrino.Claim.SCOR
-		ct.SORD =
-			ct.SORD + a.Corrino.Claim.SORD
+		ct.UCor += a.Corrino.Claim.UCor
+		ct.SCOR += a.Corrino.Claim.SCOR
+		ct.SORD += a.Corrino.Claim.SORD
 
 		a.Corrino.Total = ct
-		// a.Total = a.Total+ a.Corrino.Total.NativeTotal)+ a.Corrino.Total.SCOR)+ a.Corrino.Total.SORD)
+
 	case 3:
 		for _, el := range a.Ordos.Rewards {
-			ct.UOrd =
-				ct.UOrd + el.UOrd
+			ct.UOrd += el.UOrd
 
-			ct.SCOR =
-				ct.SCOR + el.SCOR
+			ct.SCOR += el.SCOR
 
-			ct.SORD =
-				ct.SORD + el.SORD
+			ct.SORD += el.SORD
 
 		}
 		//claim reward +
-		ct.UOrd =
-			ct.UOrd + a.Ordos.Claim.UOrd
-		ct.SCOR =
-			ct.SCOR + a.Ordos.Claim.SCOR
-		ct.SORD =
-			ct.SORD + a.Ordos.Claim.SORD
+		ct.UOrd += a.Ordos.Claim.UOrd
+		ct.SCOR += a.Ordos.Claim.SCOR
+		ct.SORD += a.Ordos.Claim.SORD
 
 		a.Ordos.Total = ct
 

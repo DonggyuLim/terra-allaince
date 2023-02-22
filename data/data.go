@@ -82,6 +82,7 @@ func MakeData(height, chainCode int) {
 			LastHeight: uint(height),
 		}
 
+		//GET REWARD
 		for _, re := range resReward {
 			switch re.Denom {
 			case sCOR:
@@ -128,13 +129,13 @@ func MakeData(height, chainCode int) {
 			continue
 		}
 
-		account.UpdateUndelegate(chainCode, height)
 		account.UpdateClaimAndReward(
 			chainCode,
 			el.Delegation.DelegatorAddress,
 			el.Delegation.ValidatorAddress,
 			reward)
 
+		account.UpdateUndelegate(chainCode, height)
 		account.CalculateTotal(chainCode)
 
 		db.ReplaceOne(bson.D{{Key: "address", Value: account.Address}}, account)

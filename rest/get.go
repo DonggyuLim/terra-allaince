@@ -30,13 +30,13 @@ func Root(c *gin.Context) {
 	for _, el := range list {
 		total := ToTalResponse{
 			Address: el.Address,
-			UAtr:    fmt.Sprintf("%f", el.Total.UAtr),
-			UCor:    fmt.Sprintf("%f", el.Total.UCor),
-			UHar:    fmt.Sprintf("%f", el.Total.UHar),
-			UOrd:    fmt.Sprintf("%f", el.Total.UOrd),
-			SCOR:    fmt.Sprintf("%f", el.Total.SCOR),
-			SORD:    fmt.Sprintf("%f", el.Total.SORD),
-			Total:   fmt.Sprintf("%f", el.Total.Total),
+			UAtr:    fmt.Sprintf("%v", el.Total.UAtr),
+			UCor:    fmt.Sprintf("%v", el.Total.UCor),
+			UHar:    fmt.Sprintf("%v", el.Total.UHar),
+			UOrd:    fmt.Sprintf("%v", el.Total.UOrd),
+			SCOR:    fmt.Sprintf("%v", el.Total.SCOR),
+			SORD:    fmt.Sprintf("%v", el.Total.SORD),
+			Total:   fmt.Sprintf("%v", el.Total.Total),
 		}
 		res = append(res, total)
 	}
@@ -59,7 +59,7 @@ func UatrRank(c *gin.Context) {
 	for _, el := range list {
 		atr := UAtrResponse{
 			Address: el.Atreides.Address,
-			UAtr:    fmt.Sprintf("%f", el.Total.UAtr),
+			UAtr:    fmt.Sprintf("%v", el.Total.UAtr),
 		}
 		res = append(res, atr)
 	}
@@ -82,7 +82,7 @@ func UHarRank(c *gin.Context) {
 	for _, el := range list {
 		uhar := UharResponse{
 			Address: el.Harkonnen.Address,
-			UHar:    fmt.Sprintf("%f", el.Total.UHar),
+			UHar:    fmt.Sprintf("%v", el.Total.UHar),
 		}
 		res = append(res, uhar)
 	}
@@ -105,7 +105,7 @@ func UCorRank(c *gin.Context) {
 	for _, el := range list {
 		ucor := UCorResponse{
 			Address: el.Corrino.Address,
-			UCor:    fmt.Sprintf("%f", el.Total.UCor),
+			UCor:    fmt.Sprintf("%v", el.Total.UCor),
 		}
 		res = append(res, ucor)
 	}
@@ -128,7 +128,7 @@ func UOrdRank(c *gin.Context) {
 	for _, el := range list {
 		uord := UOrdResponse{
 			Address: el.Ordos.Address,
-			UOrd:    fmt.Sprintf("%f", el.Total.UOrd),
+			UOrd:    fmt.Sprintf("%v", el.Total.UOrd),
 		}
 		res = append(res, uord)
 	}
@@ -151,7 +151,7 @@ func SCorRank(c *gin.Context) {
 	for _, el := range list {
 		scor := ScorResponse{
 			Address: el.Address,
-			SCor:    fmt.Sprintf("%f", el.Total.SCOR),
+			SCor:    fmt.Sprintf("%v", el.Total.SCOR),
 		}
 		res = append(res, scor)
 	}
@@ -174,7 +174,7 @@ func SOrdRank(c *gin.Context) {
 	for _, el := range list {
 		sord := SOrdResponse{
 			Address: el.Address,
-			Sord:    fmt.Sprintf("%f", el.Total.SORD),
+			Sord:    fmt.Sprintf("%v", el.Total.SORD),
 		}
 		res = append(res, sord)
 	}
@@ -209,13 +209,13 @@ func UserReward(c *gin.Context) {
 	case nil:
 		myReward := MyRewardResponse{
 			Address: account.Address,
-			UAtr:    fmt.Sprintf("%f", account.Total.UAtr),
-			UHar:    fmt.Sprintf("%f", account.Total.UHar),
-			UCor:    fmt.Sprintf("%f", account.Total.UCor),
-			UOrd:    fmt.Sprintf("%f", account.Total.UOrd),
-			SCor:    fmt.Sprintf("%f", account.Total.SCOR),
-			SOrd:    fmt.Sprintf("%f", account.Total.SORD),
-			Total:   fmt.Sprintf("%f", account.Total.Total),
+			UAtr:    fmt.Sprintf("%v", account.Total.UAtr),
+			UHar:    fmt.Sprintf("%v", account.Total.UHar),
+			UCor:    fmt.Sprintf("%v", account.Total.UCor),
+			UOrd:    fmt.Sprintf("%v", account.Total.UOrd),
+			SCor:    fmt.Sprintf("%v", account.Total.SCOR),
+			SOrd:    fmt.Sprintf("%v", account.Total.SORD),
+			Total:   fmt.Sprintf("%v", account.Total.Total),
 		}
 		c.JSON(200, myReward)
 	case mongo.ErrNoDocuments:

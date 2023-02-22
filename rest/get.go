@@ -50,7 +50,7 @@ func Root(c *gin.Context) {
 
 type UAtrResponse struct {
 	Address string `json:"address"`
-	UAtr    string `json:"uatr_amount"`
+	UAtr    string `json:"amount"`
 }
 
 func UatrRank(c *gin.Context) {
@@ -73,7 +73,7 @@ func UatrRank(c *gin.Context) {
 
 type UharResponse struct {
 	Address string `json:"address"`
-	UHar    string `json:"uhar_amount"`
+	UHar    string `json:"amount"`
 }
 
 func UHarRank(c *gin.Context) {
@@ -96,7 +96,7 @@ func UHarRank(c *gin.Context) {
 
 type UCorResponse struct {
 	Address string `json:"address"`
-	UCor    string `json:"ucor_amount"`
+	UCor    string `json:"amount"`
 }
 
 func UCorRank(c *gin.Context) {
@@ -119,7 +119,7 @@ func UCorRank(c *gin.Context) {
 
 type UOrdResponse struct {
 	Address string `json:"address"`
-	UOrd    string `json:"uord_amount"`
+	UOrd    string `json:"amount"`
 }
 
 func UOrdRank(c *gin.Context) {
@@ -142,7 +142,7 @@ func UOrdRank(c *gin.Context) {
 
 type ScorResponse struct {
 	Address string `json:"address"`
-	SCor    string `json:"scor_amount"`
+	SCor    string `json:"amount"`
 }
 
 func SCorRank(c *gin.Context) {
@@ -165,7 +165,7 @@ func SCorRank(c *gin.Context) {
 
 type SOrdResponse struct {
 	Address string `json:"address"`
-	Sord    string `json:"sord_amount"`
+	Sord    string `json:"amount"`
 }
 
 func SOrdRank(c *gin.Context) {

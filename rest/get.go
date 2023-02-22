@@ -58,7 +58,7 @@ func UatrRank(c *gin.Context) {
 	var res []UAtrResponse
 	for _, el := range list {
 		atr := UAtrResponse{
-			Address: el.Address,
+			Address: el.Atreides.Address,
 			UAtr:    fmt.Sprintf("%f", el.Total.UAtr),
 		}
 		res = append(res, atr)
@@ -81,7 +81,7 @@ func UHarRank(c *gin.Context) {
 	var res []UharResponse
 	for _, el := range list {
 		uhar := UharResponse{
-			Address: el.Address,
+			Address: el.Harkonnen.Address,
 			UHar:    fmt.Sprintf("%f", el.Total.UHar),
 		}
 		res = append(res, uhar)
@@ -104,7 +104,7 @@ func UCorRank(c *gin.Context) {
 	var res []UCorResponse
 	for _, el := range list {
 		ucor := UCorResponse{
-			Address: el.Address,
+			Address: el.Corrino.Address,
 			UCor:    fmt.Sprintf("%f", el.Total.UCor),
 		}
 		res = append(res, ucor)
@@ -127,7 +127,7 @@ func UOrdRank(c *gin.Context) {
 	var res []UOrdResponse
 	for _, el := range list {
 		uord := UOrdResponse{
-			Address: el.Address,
+			Address: el.Ordos.Address,
 			UOrd:    fmt.Sprintf("%f", el.Total.UOrd),
 		}
 		res = append(res, uord)
@@ -186,6 +186,16 @@ func SOrdRank(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+type MyRewardResponse struct {
+	Address string `json:"address"`
+	UAtr    string `json:"uatr"`
+	UHar    string `json:"uhar"`
+	UCor    string `json:"ucor"`
+	UOrd    string `json:"uord"`
+	SCor    string `json:"scor"`
+	SOrd    string `json:"sord"`
+}
+
 func UserReward(c *gin.Context) {
 	// address := c.Query("address")
 	address := c.Param("address")
@@ -196,10 +206,18 @@ func UserReward(c *gin.Context) {
 	ok := db.FindOne(filter, &account)
 	switch ok {
 	case nil:
-		// fmt.Println(ok, account)
-		c.JSON(200, account)
+		myReward := MyRewardResponse{
+			Address: account.Address,
+			UAtr:    fmt.Sprintf("%f", account.Total.UAtr),
+			UHar:    fmt.Sprintf("%f", account.Total.UHar),
+			UCor:    fmt.Sprintf("%f", account.Total.UCor),
+			UOrd:    fmt.Sprintf("%f", account.Total.UOrd),
+			SCor:    fmt.Sprintf("%f", account.Total.SCOR),
+			SOrd:    fmt.Sprintf("%f", account.Total.SORD),
+		}
+		c.JSON(200, myReward)
 	case mongo.ErrNoDocuments:
 		// fmt.Println(address)
-		c.String(404, "Not Account")
+		c.String(404, "Invalid Address")
 	}
 }

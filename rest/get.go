@@ -194,6 +194,7 @@ type MyRewardResponse struct {
 	UOrd    string `json:"uord"`
 	SCor    string `json:"scor"`
 	SOrd    string `json:"sord"`
+	Total   string `json:"total"`
 }
 
 func UserReward(c *gin.Context) {
@@ -214,6 +215,7 @@ func UserReward(c *gin.Context) {
 			UOrd:    fmt.Sprintf("%f", account.Total.UOrd),
 			SCor:    fmt.Sprintf("%f", account.Total.SCOR),
 			SOrd:    fmt.Sprintf("%f", account.Total.SORD),
+			Total:   fmt.Sprintf("%f", account.Total.Total),
 		}
 		c.JSON(200, myReward)
 	case mongo.ErrNoDocuments:

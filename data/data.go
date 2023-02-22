@@ -86,28 +86,28 @@ func MakeData(height, chainCode int) {
 			case sCOR:
 				amount, err := strconv.Atoi(re.Amount)
 				utils.PanicError(err)
-				reward.SCOR = reward.SCOR + uint(amount)
+				reward.SCOR = uint(amount)
 
 			case sORD:
 				amount, err := strconv.Atoi(re.Amount)
 				utils.PanicError(err)
-				reward.SORD = reward.SORD + uint(amount)
+				reward.SORD = uint(amount)
 			case uatr:
 				amount, err := strconv.Atoi(re.Amount)
 				utils.PanicError(err)
-				reward.UAtr = reward.UAtr + uint(amount)
+				reward.UAtr = uint(amount)
 			case uhar:
 				amount, err := strconv.Atoi(re.Amount)
 				utils.PanicError(err)
-				reward.UHar = reward.UHar + uint(amount)
+				reward.UHar = uint(amount)
 			case ucor:
 				amount, err := strconv.Atoi(re.Amount)
 				utils.PanicError(err)
-				reward.UCor = reward.UCor + uint(amount)
+				reward.UCor = uint(amount)
 			case uord:
 				amount, err := strconv.Atoi(re.Amount)
 				utils.PanicError(err)
-				reward.UOrd = reward.UOrd + uint(amount)
+				reward.UOrd = uint(amount)
 			}
 		}
 

@@ -109,7 +109,8 @@ func (a *Account) UpdateClaimAndReward(
 			claim := origin.UAtr - reward.UAtr
 			a.Atreides.Claim.UAtr =
 				a.Atreides.Claim.UAtr + claim
-
+			a.Atreides.Claim.SCOR += origin.SCOR
+			a.Atreides.Claim.SORD += origin.SORD
 		}
 		a.Atreides.Rewards[validator] = reward
 	case 1:
@@ -119,6 +120,8 @@ func (a *Account) UpdateClaimAndReward(
 			claim := origin.UHar - reward.UHar
 			a.Harkonnen.Claim.UHar =
 				a.Harkonnen.Claim.UHar + claim
+			a.Harkonnen.Claim.SCOR += origin.SCOR
+			a.Harkonnen.Claim.SORD += origin.SORD
 		}
 		a.Harkonnen.Rewards[validator] = reward
 	case 2:
@@ -128,6 +131,8 @@ func (a *Account) UpdateClaimAndReward(
 			claim := origin.UCor - reward.UCor
 			a.Corrino.Claim.UCor =
 				a.Corrino.Claim.UCor + claim
+			a.Corrino.Claim.SCOR += origin.SCOR
+			a.Corrino.Claim.SORD += origin.SORD
 		}
 
 		a.Corrino.Rewards[validator] = reward
@@ -138,6 +143,9 @@ func (a *Account) UpdateClaimAndReward(
 			claim := origin.UOrd - reward.UOrd
 			a.Ordos.Claim.UOrd =
 				a.Ordos.Claim.UOrd + claim
+			a.Ordos.Claim.SCOR += origin.SCOR
+			a.Ordos.Claim.SORD += origin.SORD
+
 		}
 		a.Ordos.Rewards[validator] = reward
 	}
@@ -149,7 +157,7 @@ func (a *Account) UpdateUndelegate(chainCode, height int) {
 	switch chainCode {
 	case 0:
 		for k, v := range a.Atreides.Rewards {
-			if v.LastHeight < h {
+			if (v.LastHeight + 1) != h {
 				a.Atreides.Claim.UAtr =
 					a.Atreides.Claim.UAtr + v.UAtr
 				a.Atreides.Claim.SCOR =
@@ -166,7 +174,7 @@ func (a *Account) UpdateUndelegate(chainCode, height int) {
 		}
 	case 1:
 		for k, v := range a.Harkonnen.Rewards {
-			if v.LastHeight < h {
+			if (v.LastHeight + 1) != h {
 				a.Harkonnen.Claim.UHar =
 					a.Harkonnen.Claim.UHar + v.UHar
 				a.Harkonnen.Claim.SCOR =
@@ -183,7 +191,7 @@ func (a *Account) UpdateUndelegate(chainCode, height int) {
 		}
 	case 2:
 		for k, v := range a.Corrino.Rewards {
-			if v.LastHeight < h {
+			if (v.LastHeight + 1) != h {
 				a.Corrino.Claim.UCor =
 					a.Corrino.Claim.UCor + v.UCor
 				a.Corrino.Claim.SCOR =
@@ -200,7 +208,7 @@ func (a *Account) UpdateUndelegate(chainCode, height int) {
 		}
 	case 3:
 		for k, v := range a.Ordos.Rewards {
-			if v.LastHeight < h {
+			if (v.LastHeight + 1) != h {
 				a.Ordos.Claim.UOrd =
 					a.Ordos.Claim.UOrd + v.UOrd
 				a.Ordos.Claim.SCOR =
@@ -312,24 +320,24 @@ func (a *Account) CalculateTotal(chainCode int) {
 
 	a.Total.UAtr = decimal.NewFromInt(0).
 		Add(decimal.NewFromInt(int64(a.Atreides.Total.UAtr))).
-		Div(decimal.NewFromInt(1000000)).InexactFloat64()
-	a.Total.UHar = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Harkonnen.Total.UHar))).Div(decimal.NewFromInt(1000000)).InexactFloat64()
-	a.Total.UCor = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Corrino.Total.UCor))).Div(decimal.NewFromInt(1000000)).InexactFloat64()
-	a.Total.UOrd = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Ordos.Total.UOrd))).Div(decimal.NewFromInt(1000000)).InexactFloat64()
+		Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
+	a.Total.UHar = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Harkonnen.Total.UHar))).Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
+	a.Total.UCor = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Corrino.Total.UCor))).Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
+	a.Total.UOrd = decimal.NewFromInt(0).Add(decimal.NewFromInt(int64(a.Ordos.Total.UOrd))).Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
 
 	//calculate SCOR Total
 	a.Total.SCOR = decimal.NewFromInt(0).
 		Add(decimal.NewFromInt(int64(a.Atreides.Total.SCOR))).
 		Add(decimal.NewFromInt(int64(a.Harkonnen.Total.SCOR))).
 		Add(decimal.NewFromInt(int64(a.Corrino.Total.SCOR))).
-		Add(decimal.NewFromInt(int64(a.Ordos.Total.SCOR))).Div(decimal.NewFromInt(1000000)).InexactFloat64()
+		Add(decimal.NewFromInt(int64(a.Ordos.Total.SCOR))).Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
 
 	///calculate SORD Total
 	a.Total.SORD = decimal.NewFromInt(0).
 		Add(decimal.NewFromInt(int64(a.Atreides.Total.SORD))).
 		Add(decimal.NewFromInt(int64(a.Harkonnen.Total.SORD))).
 		Add(decimal.NewFromInt(int64(a.Corrino.Total.SORD))).
-		Add(decimal.NewFromInt(int64(a.Ordos.Total.SORD))).Div(decimal.NewFromInt(1000000)).InexactFloat64()
+		Add(decimal.NewFromInt(int64(a.Ordos.Total.SORD))).Div(decimal.NewFromInt(1000000)).Truncate(6).InexactFloat64()
 
 	a.Total.Total =
 		decimal.NewFromFloat(a.Total.UAtr).
@@ -337,7 +345,7 @@ func (a *Account) CalculateTotal(chainCode int) {
 			Add(decimal.NewFromFloat(a.Total.UCor)).
 			Add(decimal.NewFromFloat(a.Total.UOrd)).
 			Add(decimal.NewFromFloat(a.Total.SCOR)).
-			Add(decimal.NewFromFloat(a.Total.SORD)).InexactFloat64()
+			Add(decimal.NewFromFloat(a.Total.SORD)).Truncate(6).InexactFloat64()
 }
 
 func (r Reward) EncodeJson() string {
@@ -345,8 +353,3 @@ func (r Reward) EncodeJson() string {
 	utils.PanicError(err)
 	return string(bytes)
 }
-
-// func (r Reward) GetReward(endpint string, chainCode int) {
-// 	client := req.C.R()
-
-// }

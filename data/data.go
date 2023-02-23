@@ -56,7 +56,7 @@ func MakeData(height, chainCode int) {
 
 	if height > latestBlockHeight {
 		height = latestBlockHeight
-		fmt.Println(height)
+
 	}
 
 	delegations, err := GetDelegations(height, chainCode)
@@ -64,7 +64,7 @@ func MakeData(height, chainCode int) {
 		fmt.Printf("%v %v Not Delegate\n", chainCode, height)
 		return
 	}
-
+	fmt.Printf("chain:%v height:%v delegationsCount:%v", chainCode, height, len(delegations.Deligations))
 	for _, el := range delegations.Deligations {
 
 		resReward, err := GetRewards(
